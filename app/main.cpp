@@ -1,16 +1,17 @@
 #include <iostream>
-#include "Lexer.h"
-#include "Automate.h"
+#include "../headers/Lexer.h"
+#include "../headers/Automate.h"
 
 
 
 int main(void) {
-   string chaine("1+3");
-   // string chaine("(1+34)*123");
+   string chaine("(1+34)*123");
+   cout << "Analyse de : " << chaine << endl;
 
-   // Lexer l(chaine);
 
-   // Automate();
+   Automate *a = new Automate(chaine);
+   a->start();
+
 
    return 0;
 

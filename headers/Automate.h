@@ -8,13 +8,13 @@
 
 using namespace std;
 
-
+class State;
 
 
 class Automate {
 public:
     // Constructor
-    Automate(Lexer &lexer);
+    Automate(string flux);
 
     // Destructor
     ~Automate();
@@ -31,13 +31,15 @@ public:
     //
     void transition_simple(Symbole *s, State *e);
 
+    void afficherStacks();
+
 private:
     // state stack 
     stack<State *> stateStack;
     stack<Symbole*> symbolStack;
 
     // lexer
-    Lexer &lexer;
+    Lexer *lexer;
 
     // flags
     bool accept;

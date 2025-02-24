@@ -1,10 +1,11 @@
-#include "Lexer.h"
+#include "../headers/Lexer.h"
+#include <iostream>
 
 Symbole * Lexer::Consulter() {
    if(DEBUG){cout << "Lexer.Consulter()" << endl;}
    if (!tampon) {
 
-      if (tete==flux.length())
+      if (tete == static_cast<int>(flux.length()))
          tampon = new Symbole(FIN);
       else
       {

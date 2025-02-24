@@ -1,4 +1,4 @@
-#include "symbole.h"
+#include "../headers/Symbole.h"
 #include <iostream>
 
 void Symbole::Affiche() {
@@ -14,4 +14,6 @@ void Expr::Affiche() {
    Symbole::Affiche();
    cout<<"("<<valeur<<")";
 }
+
+
 

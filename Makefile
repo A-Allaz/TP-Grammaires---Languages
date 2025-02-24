@@ -1,25 +1,28 @@
-CCFLAGS = -DMAP -Wall -Werror -std=c++11 -ansi
+CCFLAGS = -DMAP -Wall -Werror -std=c++11
 COMP = g++
 EDL = g++
-SRC = main.cpp Lexer.cpp Symbole.cpp Automate.cpp State.cpp 
+SRC_DIR_APP = app
+SRC_DIR_SRC = src
+SRC = $(SRC_DIR_APP)/main.cpp $(SRC_DIR_SRC)/Lexer.cpp $(SRC_DIR_SRC)/Symbole.cpp $(SRC_DIR_SRC)/Automate.cpp $(SRC_DIR_SRC)/State.cpp
 OBJ = $(SRC:.cpp=.o)
 EXE = exe
 EFFACE = clean
 RM = @rm
 RMFLAGS = -f
 
-$(EXE) : obj
+$(EXE): $(OBJ)
 	$(COMP) -o $(EXE) $(OBJ)
 
-obj: $(SRC)
-	$(COMP) -c $(SRC) $(CCFLAGS)
+%.o: %.cpp
+	$(COMP) -c $< -o $@ $(CCFLAGS)
 
 $(EFFACE):
 	$(RM) $(RMFLAGS) $(OBJ) $(EXE) core
 
-run : $(EXE)
+run: $(EXE)
 	./$(EXE)
 
-.PHONY : clean run
+.PHONY: clean run
+
 
 

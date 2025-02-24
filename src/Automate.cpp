@@ -1,37 +1,32 @@
-#include "Automate.h"
-#include "Lexer.h"
+#include "../headers/Automate.h"
+
+#include <iostream>
+using namespace std;
 
 // constructor
-Automate::Automate(Lexer &lexer): 
-    lexer(lexer), accept(false), error(false)
+Automate::Automate(string flux)
 {
-    // initialize stacks
-    stateStack = stack<State*>();
-    symbolStack = stack<Symbole*>();
-
-    // initialize the first state
-    stateStack.push(new State0("state0"));
-
+    this->lexer = new Lexer(flux);
+    State0 *depart = new State0();
+    stateStack.push(depart);
 }
 
 // start the automate
 void Automate::start(){
-    if(DEBUG){cout << "Automate.start()" << endl;}
-    // while we are not in the accept state
-    while(!accept && !error){
-        // get the current state
-        State* currentState = stateStack.top();
-        // get the current symbol
-        Symbole* currentSymbol = symbolStack.top();
+    bool prochainEtat = true;
 
-        // transition 
-        if(!currentState->transition(*this, currentSymbol)){
-            error = false;
-        } else if(stateStack.top() == 0){
-            // youpi
-        } else {
-            cout << "ERROR" << endl;
-        }
+    while (prochainEtat) {
+      Symbole *s = lexer->Consulter();
+      lexer->Avancer();
+      prochainEtat = stateStack.top()->transition(*this, s);
+      afficherStacks();
+    }
+    if (*symbolStack.top() != ERREUR) {
+  
+      int resultat = symbolStack.top()->getValue();
+      cout << "Syntaxe correct" << endl << "Résultat : " << resultat << endl;
+    } else {
+      cout << "Syntaxe non reconnu : caractere invalide" << endl;
     }
 }
 
@@ -42,7 +37,8 @@ void Automate::decalage(Symbole *s, State *e){
     stateStack.push(e);
     symbolStack.push(s);
     // move the head forward
-    lexer.Avancer();
+    lexer->Avancer();
+    afficherStacks();
 
 }
 
@@ -54,10 +50,11 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
     Symbole* first;
     Symbole* op;
     Symbole* second;
-    // read the top
+    Symbole* expr;
+    Symbole* closePar;
 
 
-    Symbole* first = symbolStack.top();
+    first = symbolStack.top();
     symbolStack.pop();
     
     // rules 
@@ -101,9 +98,9 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
             // E -> (E)
             // get the expression in the parenthesis
             // we don’t have to compute anything here
-            Symbole* expr = symbolStack.top();
+            expr = symbolStack.top();
             symbolStack.pop();
-            Symbole* closePar = symbolStack.top();
+            closePar = symbolStack.top();
             symbolStack.pop();
 
             symbolStack.push((Expr*) expr);
@@ -137,6 +134,7 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
     // transition 
     currentState = stateStack.top();
     currentState->transition(*this, s);
+    afficherStacks();
     
 }
 
@@ -145,4 +143,23 @@ void Automate::transition_simple(Symbole *s, State *e){
     if(DEBUG){cout << "Automate.transition_simple()" << endl;}
     symbolStack.push(s);
     stateStack.push(e);
+    afficherStacks();
+}
+
+void Automate::afficherStacks() {
+    cout << "Contenu de stateStack: ";
+    stack<State*> tempStateStack = stateStack;
+    while (!tempStateStack.empty()) {
+        cout << tempStateStack.top() << " ";
+        tempStateStack.pop();
+    }
+    cout << endl;
+
+    cout << "Contenu de symbolStack: ";
+    stack<Symbole*> tempSymbolStack = symbolStack;
+    while (!tempSymbolStack.empty()) {
+        cout << tempSymbolStack.top() << " ";
+        tempSymbolStack.pop();
+    }
+    cout << endl;
 }
