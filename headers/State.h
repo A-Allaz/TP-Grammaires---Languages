@@ -2,17 +2,18 @@
 #include <iostream>
 using namespace std;
 
-#include "Automate.h"
 #include "Symbole.h"
 
-// abstract class
+class Automate;
+
+/* ABSTRACT STATE CLASS */
 class State {
     public:
         State(string name) : name(name) {};
         virtual ~State();
         void print() const; // debugging the state
 
-        virtual bool transition (Automate &automate, Symbole* s) = 0; // pure
+        virtual bool transition (Automate &automate, Symbole* s) = 0;
 
     protected:
         string name;
@@ -22,11 +23,7 @@ class State0 : public State {
     public:
         State0(string name);
         virtual ~State0();
-        virtual bool transition (Automate &automate, Symbole* s);
-
-        
-
-    
+        virtual bool transition (Automate &automate, Symbole* s); 
 };
 
 class State1 : public State {
