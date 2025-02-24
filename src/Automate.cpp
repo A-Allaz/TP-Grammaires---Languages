@@ -3,7 +3,7 @@
 
 // constructor
 Automate::Automate(Lexer &lexer): 
-    lexer(lexer), accept(false), error(false)
+    lexer(lexer)
 {
     // initialize stacks
     stateStack = stack<State*>();
@@ -14,25 +14,35 @@ Automate::Automate(Lexer &lexer):
 
 }
 
+// destructor
+Automate::~Automate(){
+    // be sure all the stacks are freed
+    if(DEBUG){cout << "Automate.~Automate()" << endl;}
+    // delete all states
+    while (!stateStack.empty()) {
+        delete stateStack.top();
+        stateStack.pop();
+    }
+
+    // delete all symbols
+    while (!symbolStack.empty()) {
+        delete symbolStack.top();
+        symbolStack.pop();
+    }
+}
+
+
 // start the automate
 void Automate::start(){
     if(DEBUG){cout << "Automate.start()" << endl;}
-    // while we are not in the accept state
-    while(!accept && !error){
-        // get the current state
-        State* currentState = stateStack.top();
-        // get the current symbol
-        Symbole* currentSymbol = symbolStack.top();
 
-        // transition 
-        if(!currentState->transition(*this, currentSymbol)){
-            error = false;
-        } else if(stateStack.top() == 0){
-            // youpi
-        } else {
-            cout << "ERROR" << endl;
-        }
+    // start the automate by the first transition of the first state
+    State* currentState = stateStack.top();
+    while (!currentState->transition(*this, lexer.Consulter())) {
+        // apply the transition for the state above the stack
+        currentState = stateStack.top();
     }
+   
 }
 
 // decalage

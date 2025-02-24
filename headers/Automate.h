@@ -38,9 +38,4 @@ private:
 
     // lexer
     Lexer &lexer;
-
-    // flags
-    bool accept;
-    bool error;
-
 };
