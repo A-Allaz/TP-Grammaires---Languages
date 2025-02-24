@@ -1,4 +1,6 @@
 #include "Automate.h"
+#include "State.h"
+#include "Symbole.h"
 #include "Lexer.h"
 
 // constructor
@@ -61,72 +63,85 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
     if(DEBUG){cout << "Automate.reduction()" << endl;}
     // initialize variables
     int value;
-    Symbole* first;
-    Symbole* op;
-    Symbole* second;
+    Symbole* currentSymbol;
     // read the top
 
 
-    Symbole* first = symbolStack.top();
+    currentSymbol= symbolStack.top();
     symbolStack.pop();
     
     // rules 
     switch (ruleNumber) {
         case 2:
             // E -> E + E
-            op = symbolStack.top();
+            // delete the operator
+            delete symbolStack.top();
             symbolStack.pop();
-            second = symbolStack.top();
-            symbolStack.pop();
-            value = ((Expr*) first)->getValue() + ((Expr*) second)->getValue();
 
+            // store the first value
+            value = ((Expr*) currentSymbol)->getValue();
+            // delete the first value
+            delete currentSymbol;
+
+            // get the second value
+            currentSymbol = symbolStack.top();
+            symbolStack.pop();
+
+            // add the second value
+            value += ((Expr*) currentSymbol)->getValue();
+            // delete the second value
+            delete currentSymbol;
+
+            // put the result on the stack
             symbolStack.push(new Expr(value));
             cout << "E -> E + E" << endl;
             cout << "Value: " << value << endl;
-
-            // delete symbols
-            delete first;
-            delete op;
-            delete second;
             break;
+
         case 3:
             // E -> E * E
-            op = symbolStack.top();
+            // delete the operator
+            delete symbolStack.top();
             symbolStack.pop();
-            second = symbolStack.top();
-            symbolStack.pop();
-            value = ((Expr*) first)->getValue() * ((Expr*) second)->getValue();
 
+            // store the first value
+            value = ((Expr*) currentSymbol)->getValue();
+            // delete the first value
+            delete currentSymbol;
+            
+            // get the second value
+            currentSymbol = symbolStack.top();
+            symbolStack.pop();
+
+            // multiply the second value
+            value *= ((Expr*) currentSymbol)->getValue();
+            // delete the second value
+            delete currentSymbol;
+
+            // put the result on the stack
             symbolStack.push(new Expr(value));
             cout << "E -> E * E" << endl;
             cout << "Value: " << value << endl;
 
-            // delete symbols
-            delete first;
-            delete op;
-            delete second;
-
             break;
         case 4:
             // E -> (E)
-            // get the expression in the parenthesis
-            // we don’t have to compute anything here
-            Symbole* expr = symbolStack.top();
+            // delete the opening parenthesis
+            delete currentSymbol;
+            // get the expression
+            currentSymbol = symbolStack.top();
             symbolStack.pop();
-            Symbole* closePar = symbolStack.top();
+            // delete the closing parenthesis
+            delete symbolStack.top();
             symbolStack.pop();
 
-            symbolStack.push((Expr*) expr);
-
-            // delete symbols
-            delete first;
-            delete expr;
-            delete closePar;
+            // put back the expression on the stack
+            symbolStack.push(currentSymbol);
             
             break;
         case 5:
             // E -> val
-            symbolStack.push((Expr*) first);
+            symbolStack.push(currentSymbol);
             cout << "E -> val" << endl;
             
             break;
@@ -144,9 +159,10 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
         delete currentState;
     }
 
-    // transition 
+    // simple transition from the top of the stack
     currentState = stateStack.top();
-    currentState->transition(*this, s);
+    transition_simple(s, currentState); 
+    
     
 }
 
