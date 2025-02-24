@@ -32,3 +32,7 @@ jobs:
       # Run code
       - name: Run test
         run: make run
+
+      # Clean
+      - name: Clean test
+        run: make clean
