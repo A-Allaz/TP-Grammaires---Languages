@@ -1,7 +1,9 @@
 #pragma once // include only once
 
+#include <iostream>
 #include <string>
 #include "Symbole.h"
+
 using namespace std;
 
 class Lexer {
