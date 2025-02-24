@@ -1,5 +1,6 @@
-#include "Automate.h"
-#include "Lexer.h"
+#include "../headers/Automate.h"
+#include "../headers/Lexer.h"
+
 
 // constructor
 Automate::Automate(Lexer &lexer): 
@@ -57,7 +58,7 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
     // read the top
 
 
-    Symbole* first = symbolStack.top();
+    first = symbolStack.top();
     symbolStack.pop();
     
     // rules 
@@ -101,9 +102,12 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
             // E -> (E)
             // get the expression in the parenthesis
             // we don’t have to compute anything here
-            Symbole* expr = symbolStack.top();
+            Symbole* expr;
+            Symbole* closePar;
+
+            expr = symbolStack.top();
             symbolStack.pop();
-            Symbole* closePar = symbolStack.top();
+            closePar = symbolStack.top();
             symbolStack.pop();
 
             symbolStack.push((Expr*) expr);

@@ -3,7 +3,7 @@
 #include <string>
 using namespace std;
 
-#define DEBUG true
+#define DEBUG 0
 
 enum Identificateurs { OPENPAR, CLOSEPAR, PLUS, MULT, INT, FIN, ERREUR, EXPR };
 

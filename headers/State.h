@@ -5,6 +5,8 @@ using namespace std;
 #include "Automate.h"
 #include "Symbole.h"
 
+class Automate;
+
 // abstract class
 class State {
     public:
