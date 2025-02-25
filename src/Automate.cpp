@@ -1,6 +1,6 @@
 #include "Automate.h"
 #include "State.h"
-#include "Symbole.h"
+#include "Symbol.h"
 #include "Lexer.h"
 
 // constructor
@@ -40,7 +40,7 @@ void Automate::start(){
 
     // start the automate by the first transition of the first state
     State* currentState = stateStack.top();
-    while (!currentState->transition(*this, lexer.Consulter())) {
+    while (!currentState->transition(*this, lexer.getSymbol())) {
         // apply the transition for the state above the stack
         currentState = stateStack.top();
     }
@@ -57,15 +57,15 @@ int Automate::compute() {
 
 
 
-// decalage
-void Automate::decalage(Symbole *s, State *e){
-    if(DEBUG){cout << "Automate.decalage()" << endl;}
+// forward
+void Automate::forward(Symbole *s, State *e){
+    if(DEBUG){cout << "Automate.forward()" << endl;}
     // add the state and the symbol to the stack
     stateStack.push(e);
     symbolStack.push(s);
 
     // move the head forward
-    lexer.Avancer();
+    lexer.MoveHeadForward();
 }
 
 // reduction
@@ -170,8 +170,8 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
 }
 
 //
-void Automate::transition_simple(Symbole *s, State *e){
-    if(DEBUG){cout << "Automate.transition_simple()" << endl;}
+void Automate::forward_unterminal(Symbole *s, State *e){
+    if(DEBUG){cout << "Automate.forward_unterminal()" << endl;}
     symbolStack.push(s);
     stateStack.push(e);
 }

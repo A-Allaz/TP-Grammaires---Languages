@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stack>
 
-#include "Symbole.h"
+#include "Symbol.h"
 #include "State.h"
 #include "Lexer.h"
 
@@ -22,14 +22,14 @@ public:
     // compute the result
     int compute();
 
-    // decalage
-    void decalage(Symbole* s, State* e);
+    // forward
+    void forward(Symbole* s, State* e);
 
     // reduction
     void reduction(int n, Symbole* s, int ruleNumber);
-    // n est la taille de la règle de réduction
-    //
-    void transition_simple(Symbole* s, State* e);
+
+    // forward for an unterminal expression (not moving the head of the lexer)
+    void forward_unterminal(Symbole* s, State* e);
  
 private:
     // state stack 

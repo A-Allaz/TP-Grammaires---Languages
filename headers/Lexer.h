@@ -2,21 +2,21 @@
 
 #include <iostream>
 #include <string>
-#include "Symbole.h"
+#include "Symbol.h"
 
 using namespace std;
 
 class Lexer {
 
    public:
-      Lexer(string s) : flux(s), tete(0), tampon(nullptr) { }
+      Lexer(string s) : flux(s), head(0), buffer(nullptr) { }
       ~Lexer() { }
 
-      Symbole * Consulter();
-      void Avancer();
+      Symbole * getSymbol();
+      void MoveHeadForward();
 
    protected:
       string flux; // flux d'entrée à lire
-      int tete; // caractère courant
-      Symbole * tampon; // dernier symbole lu
+      int head; // caractère courant
+      Symbole * buffer; // dernier symbole lu
 };

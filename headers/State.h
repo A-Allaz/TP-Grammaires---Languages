@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-#include "Symbole.h"
+#include "Symbol.h"
 
 class Automate;
 
