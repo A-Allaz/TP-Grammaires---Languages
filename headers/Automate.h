@@ -19,6 +19,9 @@ public:
     // start the automate
     void start();
 
+    // compute the result
+    int compute();
+
     // decalage
     void decalage(Symbole* s, State* e);
 
