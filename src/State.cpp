@@ -20,10 +20,13 @@ bool State0::transition (Automate &automate, Symbole* s) {
         case OPENPAR: // open paranthesis
             automate.decalage(s, new State2("State 2"));
             break;
+        case EXPR:
+            automate.transition_simple(s, new State1("State 1"));
+            break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
@@ -39,14 +42,17 @@ bool State1::transition(Automate &automate, Symbole* s){
     switch(*s){
         case PLUS: // plus symbol
             automate.decalage(s, new State4("State 4"));
+            break;
         case MULT: // multiplication symbol
             automate.decalage(s, new State5("State 5"));
+            break;
         case FIN: // end of text (its the only time when we return true)
             return true;
+            break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
@@ -58,16 +64,20 @@ State2::~State2() {};
 bool State2::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State2.transition()" << endl;}
     switch(*s){
-        case PLUS:
+        case INT:
             automate.decalage(s, new State3("State 3"));
             break;
         case OPENPAR:
             automate.decalage(s, new State2("State 2"));
             break;
+        case EXPR:
+            automate.transition_simple(s, new State6("State 6"));
+            break;
+        
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
@@ -83,12 +93,12 @@ bool State3::transition(Automate &automate, Symbole * s){
         case MULT:
         case CLOSEPAR:
         case FIN:
-            automate.reduction(1, s, 5);
+            automate.reduction(1, s, 5); // E -> val donc n=1
             break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
@@ -106,10 +116,13 @@ bool State4::transition(Automate &automate, Symbole * s){
         case OPENPAR:
             automate.decalage(s, new State2("State 2"));
             break;
+        case EXPR:
+            automate.transition_simple(s, new State7("State 7"));
+            break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
@@ -127,10 +140,13 @@ bool State5::transition(Automate &automate, Symbole * s){
         case OPENPAR:
             automate.decalage(s, new State2("State 2"));
             break;
+        case EXPR:
+            automate.transition_simple(s, new State8("State 8"));
+            break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
@@ -145,17 +161,20 @@ bool State6::transition(Automate &automate, Symbole * s){
     switch(*s){
         case PLUS: // plus symbol
             automate.decalage(s, new State4("State 4"));
+            break;
         case MULT: // multiplication symbol
             automate.decalage(s, new State5("State 5"));
+            break;
         case CLOSEPAR:
             automate.decalage(s, new State9("State 9"));
+            break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
-    return false;
     }
+    return false;
 }
 
 // State 7
@@ -167,16 +186,20 @@ bool State7::transition(Automate &automate, Symbole * s){
     switch(*s){
         case PLUS: // E -> E + E
             automate.reduction(3, s, 2);
+            break;
         case MULT:
             automate.decalage(s, new State5("State 5"));
+            break;
         case CLOSEPAR: // E -> E + E
             automate.reduction(3, s, 2);
+            break;
         case FIN: // E -> E + E
             automate.reduction(3, s, 2);
+            break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
@@ -191,16 +214,20 @@ bool State8::transition(Automate &automate, Symbole * s){
     switch(*s){
         case PLUS: // E -> E * E
             automate.reduction(3, s, 3);
+            break;
         case MULT: // E -> E * E
             automate.reduction(3, s, 3);
+            break;
         case CLOSEPAR: // E -> E * E
             automate.reduction(3, s, 3);
+            break;
         case FIN: // E -> E * E
             automate.reduction(3, s, 3);
+            break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
@@ -215,16 +242,20 @@ bool State9::transition(Automate &automate, Symbole * s){
     switch(*s){
         case PLUS: // E -> ( E )
             automate.reduction(3, s, 4);
+            break;
         case MULT: // E -> ( E )
             automate.reduction(3, s, 4);
+            break;
         case CLOSEPAR: // E -> ( E )
             automate.reduction(3, s, 4);
+            break;
         case FIN: // E -> ( E )
             automate.reduction(3, s, 4);
+            break;
         default: 
             // error
             string message = "Invalid symbol: ";
-            message += *s;
+            message += Etiquettes[*s].c_str();
             throw std::invalid_argument(message);
     }
     return false;
