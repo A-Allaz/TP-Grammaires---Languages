@@ -5,14 +5,10 @@
 
 
 int main(void) {
-   // string chaine("(1)");
-   // string chaine("(1+5)*3");
-   // hard example
-   // string chaine("(1+5)*3+2*3");
-   // way harder with big numbers
-   string chaine("123*(7*7+4)+6");
-
-   Lexer lexer(chaine);
+   string chainToVerify;
+   cout << "Enter a chain: ";
+   cin >> chainToVerify;
+   Lexer lexer(chainToVerify);
 
    Automate automate(lexer);
 
