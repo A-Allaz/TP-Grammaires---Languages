@@ -43,7 +43,6 @@ void Automate::start(){
     while (!currentState->transition(*this, lexer.Consulter())) {
         // apply the transition for the state above the stack
         currentState = stateStack.top();
-        currentState->print();
     }
     
     cout << "Chain accepted" << endl;
@@ -61,7 +60,6 @@ int Automate::compute() {
 // decalage
 void Automate::decalage(Symbole *s, State *e){
     if(DEBUG){cout << "Automate.decalage()" << endl;}
-    e->print();
     // add the state and the symbol to the stack
     stateStack.push(e);
     symbolStack.push(s);
