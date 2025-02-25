@@ -43,27 +43,41 @@ void Automate::start(){
     while (!currentState->transition(*this, lexer.Consulter())) {
         // apply the transition for the state above the stack
         currentState = stateStack.top();
+        currentState->print();
     }
-   
+    
+    cout << "Chain accepted" << endl;
 }
+
+int Automate::compute() {
+    start();
+    // return the result
+    cout << "Result: " << ((Expr*) symbolStack.top())->getValue() << endl;
+    return ((Expr*) symbolStack.top())->getValue();
+}
+
+
 
 // decalage
 void Automate::decalage(Symbole *s, State *e){
     if(DEBUG){cout << "Automate.decalage()" << endl;}
+    e->print();
     // add the state and the symbol to the stack
     stateStack.push(e);
     symbolStack.push(s);
+
     // move the head forward
     lexer.Avancer();
-
 }
 
 // reduction
 void Automate::reduction(int n, Symbole *s, int ruleNumber){
     if(DEBUG){cout << "Automate.reduction()" << endl;}
+
     // initialize variables
     int value;
     Symbole* currentSymbol;
+    Expr* exprAftReduction = nullptr;
     // read the top
 
 
@@ -77,12 +91,12 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
             // delete the operator
             delete symbolStack.top();
             symbolStack.pop();
-
+            
             // store the first value
             value = ((Expr*) currentSymbol)->getValue();
             // delete the first value
             delete currentSymbol;
-
+            
             // get the second value
             currentSymbol = symbolStack.top();
             symbolStack.pop();
@@ -93,9 +107,7 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
             delete currentSymbol;
 
             // put the result on the stack
-            symbolStack.push(new Expr(value));
-            cout << "E -> E + E" << endl;
-            cout << "Value: " << value << endl;
+            exprAftReduction = new Expr(value);
             break;
 
         case 3:
@@ -119,10 +131,7 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
             delete currentSymbol;
 
             // put the result on the stack
-            symbolStack.push(new Expr(value));
-            cout << "E -> E * E" << endl;
-            cout << "Value: " << value << endl;
-
+            exprAftReduction = new Expr(value);
             break;
         case 4:
             // E -> (E)
@@ -136,14 +145,11 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
             symbolStack.pop();
 
             // put back the expression on the stack
-            symbolStack.push(currentSymbol);
-            
+            exprAftReduction = new Expr(((Expr*) currentSymbol)->getValue());        
             break;
         case 5:
             // E -> val
-            symbolStack.push(currentSymbol);
-            cout << "E -> val" << endl;
-            
+            exprAftReduction = new Expr(((Expr*) currentSymbol)->getValue());        
             break;
         default:
             break;
@@ -151,19 +157,18 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
         
     }
 
-    State* currentState;
     // pop n states from state stack
     for (int i = 0; i < n; i++) {
-        currentState = stateStack.top();
+        delete stateStack.top();
         stateStack.pop();
-        delete currentState;
     }
 
     // simple transition from the top of the stack
-    currentState = stateStack.top();
-    transition_simple(s, currentState); 
+    State* currentState = stateStack.top();
     
-    
+    // launching transition with expression on the top
+    currentSymbol = symbolStack.top();
+    currentState->transition(*this, exprAftReduction);
 }
 
 //
