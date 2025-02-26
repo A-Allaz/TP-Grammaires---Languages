@@ -38,20 +38,22 @@ Automate::~Automate(){
 void Automate::start(){
     if(DEBUG){cout << "Automate.start()" << endl;}
 
-    // start the automate by the first transition of the first state
+    // start the automate
     State* currentState = stateStack.top();
     while (!currentState->transition(*this, lexer.getSymbol())) {
         // apply the transition for the state above the stack
         currentState = stateStack.top();
     }
     
+    // if we are here the chain is accpted and well formated
     cout << "Chain accepted" << endl;
 }
 
 int Automate::compute() {
     start();
-    // return the result
+    // print the result
     cout << "Result: " << ((Expr*) symbolStack.top())->getValue() << endl;
+    // return the result
     return ((Expr*) symbolStack.top())->getValue();
 }
 
@@ -73,13 +75,11 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
     if(DEBUG){cout << "Automate.reduction()" << endl;}
 
     // initialize variables
-    int value;
-    Symbole* currentSymbol;
-    Expr* exprAftReduction = nullptr;
-    // read the top
-
-
-    currentSymbol= symbolStack.top();
+    int value; // computed value of the reduction if add mult or parenthesis
+    Expr* exprAftReduction = nullptr; // expression after reduction, contains the value
+    
+    // read the symbol on the top of the stack
+    Symbole* currentSymbol = symbolStack.top();
     symbolStack.pop();
     
     // rules 
@@ -116,19 +116,19 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
 
             // store the first value
             value = ((Expr*) currentSymbol)->getValue();
-            // delete the first value
+            // delete the first expression
             delete currentSymbol;
             
-            // get the second value
+            // get the second expression
             currentSymbol = symbolStack.top();
             symbolStack.pop();
 
-            // multiply the second value
+            // multiply by the second value
             value *= ((Expr*) currentSymbol)->getValue();
-            // delete the second value
+            // delete the second expression
             delete currentSymbol;
 
-            // put the result on the stack
+            // compute the new expression containing the result (value)
             exprAftReduction = new Expr(value);
             break;
         case 4:
@@ -138,15 +138,17 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
             // get the expression
             currentSymbol = symbolStack.top();
             symbolStack.pop();
+
             // delete the closing parenthesis
             delete symbolStack.top();
             symbolStack.pop();
 
-            // put back the expression on the stack
+            // create a new expression with the value of the expression
             exprAftReduction = new Expr(((Expr*) currentSymbol)->getValue());        
             break;
         case 5:
             // E -> val
+            // create a new expression with the value of the expression
             exprAftReduction = new Expr(((Expr*) currentSymbol)->getValue());        
             break;
         default:
@@ -161,10 +163,11 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
         stateStack.pop();
     }
 
-    // simple transition from the top of the stack
+    // get the current state at the top of the stack
     State* currentState = stateStack.top();
     
     // launching transition with expression on the top
+    // it is going to perform a forward for non terminal symbols
     currentSymbol = symbolStack.top();
     currentState->transition(*this, exprAftReduction);
 }
@@ -172,6 +175,8 @@ void Automate::reduction(int n, Symbole *s, int ruleNumber){
 //
 void Automate::forward_unterminal(Symbole *s, State *e){
     if(DEBUG){cout << "Automate.forward_unterminal()" << endl;}
+    // add the state and the symbol to the stack
     symbolStack.push(s);
     stateStack.push(e);
+    // do not move the head forward
 }
