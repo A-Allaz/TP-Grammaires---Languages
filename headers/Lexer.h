@@ -16,7 +16,7 @@ class Lexer {
       void MoveHeadForward();
 
    protected:
-      string flux; // flux d'entrée à lire
-      int head; // caractère courant
-      Symbole * buffer; // dernier symbole lu
+      string flux; // input string to analyse
+      int head; // current position in the input string
+      Symbole * buffer; // last symbol read
 };

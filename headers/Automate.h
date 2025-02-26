@@ -19,7 +19,7 @@ public:
     // start the automate
     void start();
 
-    // compute the result
+    // compute the result of the expression in the given lexer
     int compute();
 
     // forward

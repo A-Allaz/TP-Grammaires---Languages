@@ -17,10 +17,10 @@ bool State0::transition (Automate &automate, Symbole* s) {
         case INT: // val
             automate.forward(s, new State3("State 3"));
             break;
-        case OPENPAR: // open paranthesis
+        case OPENPAR: // (
             automate.forward(s, new State2("State 2"));
             break;
-        case EXPR:
+        case EXPR: // E
             automate.forward_unterminal(s, new State1("State 1"));
             break;
         default: 
@@ -40,13 +40,13 @@ State1::~State1() {};
 bool State1::transition(Automate &automate, Symbole* s){
     if(DEBUG){cout << "State1.transition()" << endl;}
     switch(*s){
-        case PLUS: // plus symbol
+        case PLUS: // +
             automate.forward(s, new State4("State 4"));
             break;
-        case MULT: // multiplication symbol
+        case MULT: // *
             automate.forward(s, new State5("State 5"));
             break;
-        case FIN: // end of text (its the only time when we return true)
+        case FIN: // $
             return true;
             break;
         default: 
@@ -64,13 +64,13 @@ State2::~State2() {};
 bool State2::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State2.transition()" << endl;}
     switch(*s){
-        case INT:
+        case INT: // val
             automate.forward(s, new State3("State 3"));
             break;
-        case OPENPAR:
+        case OPENPAR: // (
             automate.forward(s, new State2("State 2"));
             break;
-        case EXPR:
+        case EXPR: // E
             automate.forward_unterminal(s, new State6("State 6"));
             break;
         
@@ -89,11 +89,11 @@ State3::~State3() {};
 bool State3::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State3.transition()" << endl;}
     switch(*s){
-        case PLUS:
-        case MULT:
-        case CLOSEPAR:
-        case FIN:
-            automate.reduction(1, s, 5); // E -> val donc n=1
+        case PLUS: // +
+        case MULT: // *
+        case CLOSEPAR: // )
+        case FIN: // $
+            automate.reduction(1, s, 5); // E -> val (one symbol to pop)
             break;
         default: 
             // error
@@ -110,13 +110,13 @@ State4::~State4() {};
 bool State4::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State4.transition()" << endl;}
     switch(*s){
-        case INT:
+        case INT: // val
             automate.forward(s, new State3("State 3"));
             break;
-        case OPENPAR:
+        case OPENPAR: // (
             automate.forward(s, new State2("State 2"));
             break;
-        case EXPR:
+        case EXPR: // E
             automate.forward_unterminal(s, new State7("State 7"));
             break;
         default: 
@@ -134,13 +134,13 @@ State5::~State5() {};
 bool State5::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State5.transition()" << endl;}
     switch(*s){
-        case INT:
+        case INT: // val
             automate.forward(s, new State3("State 3"));
             break;
-        case OPENPAR:
+        case OPENPAR: // (
             automate.forward(s, new State2("State 2"));
             break;
-        case EXPR:
+        case EXPR: // E
             automate.forward_unterminal(s, new State8("State 8"));
             break;
         default: 
@@ -159,13 +159,13 @@ State6::~State6() {};
 bool State6::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State6.transition()" << endl;}
     switch(*s){
-        case PLUS: // plus symbol
+        case PLUS: // +
             automate.forward(s, new State4("State 4"));
             break;
-        case MULT: // multiplication symbol
+        case MULT: // *
             automate.forward(s, new State5("State 5"));
             break;
-        case CLOSEPAR:
+        case CLOSEPAR: // )
             automate.forward(s, new State9("State 9"));
             break;
         default: 
@@ -184,16 +184,16 @@ State7::~State7() {};
 bool State7::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State7.transition()" << endl;}
     switch(*s){
-        case PLUS: // E -> E + E
+        case PLUS: // E -> E + E (3 symbols to pop)
             automate.reduction(3, s, 2);
             break;
-        case MULT:
+        case MULT: // *
             automate.forward(s, new State5("State 5"));
             break;
-        case CLOSEPAR: // E -> E + E
+        case CLOSEPAR: // E -> E + E (3 symbols to pop)
             automate.reduction(3, s, 2);
             break;
-        case FIN: // E -> E + E
+        case FIN: // E -> E + E (3 symbols to pop)
             automate.reduction(3, s, 2);
             break;
         default: 
@@ -212,16 +212,16 @@ State8::~State8() {};
 bool State8::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State8.transition()" << endl;}
     switch(*s){
-        case PLUS: // E -> E * E
+        case PLUS: // E -> E * E (3 symbols to pop)
             automate.reduction(3, s, 3);
             break;
-        case MULT: // E -> E * E
+        case MULT: // E -> E * E (3 symbols to pop)
             automate.reduction(3, s, 3);
             break;
-        case CLOSEPAR: // E -> E * E
+        case CLOSEPAR: // E -> E * E (3 symbols to pop)
             automate.reduction(3, s, 3);
             break;
-        case FIN: // E -> E * E
+        case FIN: // E -> E * E (3 symbols to pop)
             automate.reduction(3, s, 3);
             break;
         default: 
@@ -240,16 +240,16 @@ State9::~State9() {};
 bool State9::transition(Automate &automate, Symbole * s){
     if(DEBUG){cout << "State9.transition()" << endl;}
     switch(*s){
-        case PLUS: // E -> ( E )
+        case PLUS: // E -> ( E ) (3 symbols to pop)
             automate.reduction(3, s, 4);
             break;
-        case MULT: // E -> ( E )
+        case MULT: // E -> ( E ) (3 symbols to pop)
             automate.reduction(3, s, 4);
             break;
-        case CLOSEPAR: // E -> ( E )
+        case CLOSEPAR: // E -> ( E ) (3 symbols to pop)
             automate.reduction(3, s, 4);
             break;
-        case FIN: // E -> ( E )
+        case FIN: // E -> ( E ) (3 symbols to pop)
             automate.reduction(3, s, 4);
             break;
         default: 

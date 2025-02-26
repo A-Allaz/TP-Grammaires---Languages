@@ -1,5 +1,7 @@
 #include "Lexer.h"
 
+// NOT COMMENTED BECAUSE IT IS GIVEN IN THE SUBJECT
+
 Symbole *Lexer::getSymbol()
 {
    if (DEBUG)
